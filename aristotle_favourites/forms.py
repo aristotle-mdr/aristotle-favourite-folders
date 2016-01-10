@@ -4,10 +4,31 @@ from aristotle_favourites.models import Folder
 from aristotle_mdr.forms.bulk_actions import BulkActionForm
 from aristotle_mdr.perms import user_can_view
 
+
 class FolderForm(forms.ModelForm):
     class Meta:
         model = Folder
         exclude = ['slug','owner', 'items']
+
+
+class BulkChangeFromFolder(BulkActionForm):
+    classes = 'fa-folder-o'
+    confirm_page = 'aristotle_favourites/actions/bulk_add.html'
+
+    folder = forms.ModelChoiceField(
+        queryset=Folder.objects.all(),
+        label=_("Folder to move to"),
+        #widget=autocomplete_light.ChoiceWidget('Autocomplete_concept')
+    )
+
+    
+    def __init__(self, *args, **kwargs):
+        super(BulkAddToFolder, self).__init__(*args, **kwargs)
+        # self.queryset = MDR._concept.objects.none()
+        self.fields['folder']=forms.ModelChoiceField(
+            queryset=self.user.favourite_folders.all(),
+            label=_("Folder to move to"),
+        )
 
 
 class BulkAddToFolder(BulkChangeFromFolder):
@@ -34,9 +55,10 @@ class BulkAddToFolder(BulkChangeFromFolder):
             "Some items failed, they had the id's: %(bad_ids)s"
         ) % {
             'num_items': len(items),
-            'bad_ids': ",".join(bad_items)
+            'bad_ids': ",".join(bad_items),
             'folder_name': folder.name,
         }
+
 
 class BulkRemoveFromFolder(BulkChangeFromFolder):
     action_text = _('Add to folder...')
@@ -54,22 +76,3 @@ class BulkRemoveFromFolder(BulkChangeFromFolder):
             'num_items': len(items),
             'folder_name': folder.name,
         }
-
-class BulkChangeFromFolder(BulkActionForm):
-    classes = 'fa-folder-o'
-    confirm_page = 'aristotle_favourites/actions/bulk_add.html'
-
-    folder = forms.ModelChoiceField(
-        queryset=Folder.objects.all(),
-        label=_("Folder to move to"),
-        #widget=autocomplete_light.ChoiceWidget('Autocomplete_concept')
-    )
-
-    
-    def __init__(self, *args, **kwargs):
-        super(BulkAddToFolder, self).__init__(*args, **kwargs)
-        # self.queryset = MDR._concept.objects.none()
-        self.fields['folder']=forms.ModelChoiceField(
-            queryset=self.user.favourite_folders.all(),
-            label=_("Folder to move to"),
-        )
