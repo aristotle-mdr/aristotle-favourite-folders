@@ -1,0 +1,34 @@
+{% extends "aristotle_mdr/user/userHome.html" %}
+{% load aristotle_tags %}
+
+{% block title %}My Favourites{% endblock %}
+{% block collapse-link%}<i class="fa fa-star fa-fw"></i> My Favourites</a>{% endblock %}
+{% block sidebar %}
+    {% include "aristotle_mdr/user/userSideBar.html" with activeTab='favourites' %}
+{% endblock %}
+
+{% block page %}
+    <h1><a href="#"><i class="fa fa-folder-o fa-fw"></i> My Favourites</a></h1>
+    <a href="{% url 'aristotle_favourites:quick_favourites' %}">Jump to quick favourites</a>
+    <a class='btn btn-default' href="{% url 'aristotle_favourites:add_folder' %}">Add new folder</a>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Description</th>
+                <th title="Number of items">#</th>
+                <th title="Actions"></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for folder in request.user.favourite_folders.all %}
+            <tr> 
+                <td><a href="{% url 'aristotle_favourites:view_folder' folder_slug=folder.slug %}">{{ folder.name }}</a></td>
+                <td>{{ folder.description }}</td>
+                <td>{{ folder.items.count }}</td>
+                <td></td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

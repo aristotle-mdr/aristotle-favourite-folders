@@ -1,0 +1,9 @@
+{% load i18n %}
+
+<li {% ifequal activeTab "active_sessions" %}class="active"{% endifequal %}>
+    <a href="{% url 'aristotle_favourites:folders' %}">
+        <i class="fa fa-star fa-fw"></i>
+        {% trans 'Favourites folders'%}
+        <span class="badge">{{request.user.favourite_folders.count}}</span>
+    </a>
+</li>
