@@ -1,0 +1,38 @@
+{% extends "aristotle_mdr/user/userHome.html" %}
+{% load aristotle_tags i18n %}
+
+{% block title %}My Favourites - {{ folder.name }}{% endblock %}
+{% block collapse-link%}<i class="fa fa-bookmark fa-fw"></i> My Favourites</a>{% endblock %}
+{% block sidebar %}
+    {% include "aristotle_mdr/user/userSideBar.html" with activeTab='favourites' %}
+{% endblock %}
+
+{% block page %}
+    <h1><a href="#"><i class="fa fa-bookmark fa-fw"></i> My Favourites</a></h1>
+        <ol class="breadcrumb">
+          <li><a href="{% url 'aristotle_favourites:folders' %}">{% trans "My Favourites" %}</a></li>
+          <li class="active">{{ folder.name }}</li>
+        </ol>
+        <p>{{ folder.description }}</p>
+    <div>
+    <p>
+        Below is a list of all your favourited items, you will recieve notifications
+        when any of these items are edit, if their registration status changes or if they are made public.
+    </p>
+    <p>
+        Use your favourites folders to keep track of important items to know when they change.
+    </p>
+        {% if page %}
+            <strong><a href="?help=help">Get help on using your favourites list</a></strong>
+            <form action="{% url 'aristotle:bulk_action' %}?next={{ request.path }}" method="POST">
+            {% csrf_token %}
+
+            {% include "aristotle_favourites/helpers/paginated_folder_list.html" with page=page %}
+            {% include "aristotle_mdr/helpers/list_action_bar.html" with wrap=True %}
+            </form>
+        {% else %}
+            <h3>You currently have no favourited items in this folder.</h3>
+        {% endif %}
+    </div>
+
+{% endblock %}
